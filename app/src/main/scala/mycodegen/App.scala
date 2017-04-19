@@ -1,5 +1,7 @@
 package mycodegen
 
 object App {
-  println(Generated.msg)
+  def main(args: Array[String]) {
+    println("HELLO WORLD!")
+  }
 }
