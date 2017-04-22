@@ -53,6 +53,7 @@ object CliWrapperPlugin extends AutoPlugin {
   import autoImport._
   override def projectSettings: Seq[Def.Setting[_]] = Seq(
     cliWrapperMain := {
+      compileInputs.in(Compile, compile).value
       val cp = cliWrapperClasspath.value.map(_.data.toURI.toURL)
       val cl = new java.net.URLClassLoader(cp.toArray, null)
       val cls = cl.loadClass(cliWrapperMainClass.value)
@@ -65,6 +66,7 @@ object CliWrapperPlugin extends AutoPlugin {
 }
 
 object ClippyCodegenPlugin extends AutoPlugin {
+  override def trigger = allRequirements
   override def requires: Plugins = CliWrapperPlugin && JvmPlugin
   object autoImport {
     lazy val clippyCodegenIn = taskKey[Seq[File]]("--in files")
@@ -85,7 +87,7 @@ object ClippyCodegenPlugin extends AutoPlugin {
 
   override def extraProjects: Seq[Project] = Seq(clippyCodegen)
 
-  override def projectSettings: Seq[_root_.sbt.Def.Setting[_]] = Seq(
+  lazy val clippyCodegenSettings = Seq(
     clippyCodegenOut := resourceManaged.in(Compile).value / "clippy",
     clippyCodegenIn := sources.in(Compile).value.**("*.scala").get,
     // can be managedClasspath if clippyCodegen project has no main.
@@ -93,7 +95,7 @@ object ClippyCodegenPlugin extends AutoPlugin {
     cliWrapperMainClass := "mycodegen.Codegen$",
     resourceGenerators.in(Compile) += Def.task {
       val log = streams.value.log
-      val cache = streams.value.cacheDirectory / "clippy-codegen"
+      val cache = target.in(Compile, compile).value / "clippy-codegen"
       val in = clippyCodegenIn.value.toSet
       cliWrapperIncremental(in, cache)(_.map {
         in =>
@@ -110,4 +112,7 @@ object ClippyCodegenPlugin extends AutoPlugin {
       })
     }
   )
+
+  override def projectSettings: Seq[_root_.sbt.Def.Setting[_]] =
+    clippyCodegenSettings
 }

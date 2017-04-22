@@ -1,2 +1,3 @@
 package mycodegen
+
 class Data {}
