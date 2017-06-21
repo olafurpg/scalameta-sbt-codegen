@@ -1,7 +1,7 @@
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.11.11"
 
 lazy val codegen = project.settings(
-  libraryDependencies += "org.scalameta" %% "scalameta" % "1.3.0"
+  libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0"
 )
 
 lazy val app = project.settings(

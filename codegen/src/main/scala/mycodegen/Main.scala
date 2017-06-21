@@ -10,13 +10,12 @@ object Main {
       case path :: Nil if path.endsWith(".scala") =>
         val jfile = new File(path)
         jfile.getParentFile.mkdirs()
-        // Do scala.meta code gene
+        // Do scala.meta code generation here.
         Files.write(
           jfile.toPath,
           source"""package mycodegen
                    object Generated {
                      val msg = "Hello world!"
-                     println(msg)
                    }
                    """.syntax.getBytes("UTF-8")
         )
