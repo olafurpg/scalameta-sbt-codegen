@@ -6,7 +6,7 @@ lazy val codegen = project.settings(
 
 lazy val app = project.settings(
   sourceGenerators in Compile += Def.taskDyn {
-    val outFile = sourceManaged.value / "mycodegen" / "Generated.scala"
+    val outFile = sourceManaged.in(Compile).value / "mycodegen" / "Generated.scala"
     Def.task {
       (run in codegen in Compile)
         .toTask(" " + outFile.getAbsolutePath)
